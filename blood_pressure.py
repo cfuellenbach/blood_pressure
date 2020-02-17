@@ -1,20 +1,25 @@
 import pandas as pd
+from pathlib import Path
 
-col_names = [
-    'date_time',
-    'sys_1', 'dis_1', 'puls_1',
-    'sys_2', 'dis_2', 'puls_2',
-    'sys_3', 'dis_3', 'puls_3',
-    'mean_sys', 'mean_dis', 'mean_puls',
-    'misc'
-    ]
+if Path('data.csv').is_file() == False:
+    col_names = [
+        'date_time',
+        'sys_1', 'dis_1', 'puls_1',
+        'sys_2', 'dis_2', 'puls_2',
+        'sys_3', 'dis_3', 'puls_3',
+        'mean_sys', 'mean_dis', 'mean_puls',
+        'misc'
+        ]
 
-bp = pd.DataFrame(columns=col_names)
+    bp = pd.DataFrame(columns=col_names)
 
-# change columns to correct dtypes
-for i in range(1, 13):
-    bp[col_names[i]] = pd.to_numeric(bp[col_names[i]])
+    # change columns to correct dtypes
+    for i in range(1, 13):
+        bp[col_names[i]] = pd.to_numeric(bp[col_names[i]])   
 
+else:
+    bp = pd.read_csv('data.csv') 
+    
 # initiate input of a new measurement > condensed as list > added to df
 
 new_measurement = []
@@ -45,12 +50,15 @@ mean_puls = round((puls_1 + puls_2 + puls_3) / 3)
 
 new_measurement.extend(
     (date_time,
-     sys_1, dis_1, puls_1,
-     sys_2, dis_2, puls_2,
-     sys_3, dis_3, puls_3,
-     mean_sys, mean_dis, mean_puls,
-     misc)
+      sys_1, dis_1, puls_1,
+      sys_2, dis_2, puls_2,
+      sys_3, dis_3, puls_3,
+      mean_sys, mean_dis, mean_puls,
+      misc)
     )
 bp.loc[len(bp)] = new_measurement
 
 bp['date_time'] = pd.to_datetime(bp['date_time'])
+
+bp.to_csv('data.csv', index = False)
+print(bp)
